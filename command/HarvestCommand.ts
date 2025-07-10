@@ -1,7 +1,7 @@
 import { ICommand } from "./ICommand";
 import { Field } from "../entities/Field";
 import { Goods } from "../entities/Goods";
-import { Storage } from "../entities/Storage";
+import { FarmStorage } from "../entities/FarmStorage";
 import { ACTION_DURATIONS } from "../constants/TimeConstants";
 
 export class HarvestCommand implements ICommand {
@@ -18,8 +18,11 @@ export class HarvestCommand implements ICommand {
         await new Promise((res) => setTimeout(res, ACTION_DURATIONS.HARVEST));
 
         const product = new Goods(this.field.type, this.field.yield);
-        Storage.instance.addGoods(this.field.id, product);
+        FarmStorage.instance.addGoods(product);
         this.field.nextCycle(); // → Harvested
         console.log(`Field #${this.field.id} harvested.`);
+        console.log(
+            `Product ${product.name} - with quantity ${product.quantity} has been send to Storage`
+        );
     }
 }

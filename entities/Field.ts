@@ -5,6 +5,7 @@ import { ISubject } from "../observers/ISubject";
 import { HarvestState } from "../fieldState/HarvestState";
 import { MachineType } from "../enums/MachineType";
 import { CultivationType } from "../enums/CultivationType";
+import { STORAGE_CONST } from "../constants/StorageConstants";
 
 export class Field implements IObserver {
     public id: number;
@@ -13,7 +14,8 @@ export class Field implements IObserver {
     public yield: number;
     public cultivationMaterial: MachineType[];
     private stopped: boolean = false;
-    private isSowed: boolean = false;
+    public isSowed: boolean = false;
+    public currentlyCultivated: boolean = false;
 
     constructor(
         id: number,
@@ -49,7 +51,10 @@ export class Field implements IObserver {
     }
 
     public update(subject: ISubject): void {
-        if (subject instanceof Subject && subject.state >= 100) {
+        if (
+            subject instanceof Subject &&
+            subject.state >= STORAGE_CONST.MAX_CAPACITY
+        ) {
             console.log(
                 `Field number ${this.id} - type ${this.type} : Max capacity reached - field production stopped`
             );

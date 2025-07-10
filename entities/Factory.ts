@@ -1,10 +1,12 @@
 import { IObserver } from "../observers/IObserver";
 import { Subject } from "../observers/Subject";
-import { Goods } from "./Goods";
 import { ISubject } from "../observers/ISubject";
 import { FactoryType } from "../enums/FactoryType";
 import { InputResourceType } from "../enums/InputResourceType";
 import { OutputResourceType } from "../enums/OutputResourceType";
+import { STORAGE_CONST } from "../constants/StorageConstants";
+import { FarmStorage } from "./FarmStorage";
+import { IProductionStrategy } from "../strategy/IProductionStrategy";
 
 export class Factory implements IObserver {
     public id: number;
@@ -13,64 +15,48 @@ export class Factory implements IObserver {
     public result: OutputResourceType;
     public multiplier: number;
     private stopped = false;
+    private productionStrategy: IProductionStrategy;
 
     constructor(
         id: number,
         type: FactoryType,
         requiredGoods: InputResourceType[],
         result: OutputResourceType,
-        multiplier: number
+        multiplier: number,
+        strategy: IProductionStrategy
     ) {
         this.id = id;
         this.type = type;
         this.requiredGoods = requiredGoods;
         this.result = result;
         this.multiplier = multiplier;
+        this.productionStrategy = strategy;
     }
 
     public update(subject: ISubject): void {
-        if (subject instanceof Subject && subject.state >= 100) {
+        if (
+            subject instanceof Subject &&
+            subject.state >= STORAGE_CONST.MAX_CAPACITY
+        ) {
             console.log(
-                `Factory number ${this.id} - type ${this.type}: Max capacity reached - factory stopped`
+                `Factory ${this.id} - ${this.type} → Max capacity reached (${subject.state})  STOPPED`
             );
             this.stopped = true;
         } else {
+            if (this.stopped) {
+                console.log(`Factory ${this.id} - ${this.type} → Resumed`);
+            }
             this.stopped = false;
         }
     }
 
-    //TODO: product transform
-    // Get Goods from storage -> transform -> addToStorage
+    public produce(storage: FarmStorage): void {
+        if (!this.stopped) {
+            this.productionStrategy.produce(this, storage);
+        }
+    }
 
-    // public transform(inputs: Goods[]): Goods | null {
-    //     if (this.stopped) {
-    //         console.log(`Factory number ${this.id} - ${this.type} is stopped.`);
-    //         return null;
-    //     }
-
-    //     const quantities = this.requiredGoods.map((req) => {
-    //         const match = inputs.find((g) => g.name === req);
-    //         if (!match) {
-    //             throw new Error(`Missing Goods ${req}`);
-    //         }
-    //         return match.quantity;
-    //     });
-
-    //     const allEqual = new Set(quantities).size === 1;
-    //     const minInput = Math.min(...quantities);
-
-    //     if (this.requiredGoods.length > 1 && !allEqual) {
-    //         throw new Error(
-    //             `[${
-    //                 this.type
-    //             }] Need same quantity as : ${this.requiredGoods.join(", ")}`
-    //         );
-    //     }
-
-    //     const totalOutput = minInput * this.multiplier;
-    //     console.log(
-    //         `[${this.type}] produce ${totalOutput} L of ${this.result}.`
-    //     );
-    //     return new Goods(this.result, totalOutput);
-    // }
+    public canProduce(storage: FarmStorage): boolean {
+        return this.productionStrategy.canProduce(this, storage);
+    }
 }

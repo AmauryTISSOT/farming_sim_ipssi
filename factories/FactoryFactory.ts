@@ -2,6 +2,17 @@ import { Factory } from "../entities/Factory";
 import { FactoryType } from "../enums/FactoryType";
 import { InputResourceType } from "../enums/InputResourceType";
 import { OutputResourceType } from "../enums/OutputResourceType";
+import { AtelierCoutureProductionStrategy } from "../strategy/AtelierCoutureProductionStrategy";
+import { BoulangerieProductionStrategy } from "../strategy/BoulangerieProductionStrategy";
+import { CaveAVinProductionStrategy } from "../strategy/CaveAVinProductionStrategy";
+import { FabriqueWagonsProductionStrategy } from "../strategy/FabriqueWagonsProductionStrategy";
+import { FilatureProductionStrategy } from "../strategy/FilatureProductionStrategy";
+import { MoulinAGrainsProductionStrategy } from "../strategy/MoulinAGrainsProductionStrategy";
+import { MoulinAHuileProductionStrategy } from "../strategy/MoulinAHuileProductionStrategy";
+import { RaffinerieSucreProductionStrategy } from "../strategy/RaffinerieSucreProductionStrategy";
+import { ScierieProductionStrategy } from "../strategy/ScierieProductionStrategy";
+import { UsineAChipsProductionStrategy } from "../strategy/UsineAChipsProductionStrategy";
+import { UsineDeJouetsProductionStrategy } from "../strategy/UsineDeJouetsProductionStrategy";
 
 let nextId = 1;
 
@@ -21,7 +32,8 @@ export class FactoryFactory {
                         InputResourceType.RIZ,
                     ],
                     OutputResourceType.HUILE,
-                    2
+                    2,
+                    new MoulinAHuileProductionStrategy()
                 );
 
             case FactoryType.SCIERIE:
@@ -30,7 +42,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.PEUPLIER],
                     OutputResourceType.PLANCHES,
-                    2
+                    2,
+                    new ScierieProductionStrategy()
                 );
 
             case FactoryType.FABRIQUE_DE_WAGONS:
@@ -39,7 +52,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.PLANCHES],
                     OutputResourceType.WAGONS,
-                    4
+                    4,
+                    new FabriqueWagonsProductionStrategy()
                 );
 
             case FactoryType.USINE_DE_JOUETS:
@@ -48,7 +62,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.PLANCHES],
                     OutputResourceType.JOUETS,
-                    3
+                    3,
+                    new UsineDeJouetsProductionStrategy()
                 );
 
             case FactoryType.MOULIN_A_GRAINS:
@@ -61,7 +76,8 @@ export class FactoryFactory {
                         InputResourceType.SORGHO,
                     ],
                     OutputResourceType.FARINE,
-                    2
+                    2,
+                    new MoulinAGrainsProductionStrategy()
                 );
 
             case FactoryType.RAFFINERIE_DE_SUCRE:
@@ -73,7 +89,8 @@ export class FactoryFactory {
                         InputResourceType.CANNE_A_SUCRE,
                     ],
                     OutputResourceType.SUCRE,
-                    2
+                    2,
+                    new RaffinerieSucreProductionStrategy()
                 );
 
             case FactoryType.FILATURE:
@@ -82,7 +99,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.COTON],
                     OutputResourceType.TISSU,
-                    2
+                    2,
+                    new FilatureProductionStrategy()
                 );
 
             case FactoryType.ATELIER_DE_COUTURE:
@@ -91,7 +109,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.TISSU],
                     OutputResourceType.VETEMENTS,
-                    2
+                    2,
+                    new AtelierCoutureProductionStrategy()
                 );
 
             case FactoryType.BOULANGERIE:
@@ -100,7 +119,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.SUCRE, InputResourceType.FARINE],
                     OutputResourceType.GATEAU,
-                    6
+                    6,
+                    new BoulangerieProductionStrategy()
                 );
 
             case FactoryType.USINE_DE_CHIPS:
@@ -109,7 +129,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.POMME_DE_TERRE, InputResourceType.HUILE],
                     OutputResourceType.CHIPS,
-                    6
+                    6,
+                    new UsineAChipsProductionStrategy()
                 );
 
             case FactoryType.CAVE_A_VIN:
@@ -118,7 +139,8 @@ export class FactoryFactory {
                     type,
                     [InputResourceType.RAISIN],
                     OutputResourceType.VIN,
-                    2
+                    2,
+                    new CaveAVinProductionStrategy()
                 );
 
             default:
