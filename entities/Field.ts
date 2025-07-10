@@ -53,7 +53,7 @@ export class Field implements IObserver {
     public update(subject: ISubject): void {
         if (
             subject instanceof Subject &&
-            subject.state >= STORAGE_CONST.MAX_CAPACITY
+            subject.state >= STORAGE_CONST.MAX_STORAGE_CAPACITY
         ) {
             console.log(
                 `Field number ${this.id} - type ${this.type} : Max capacity reached - field production stopped`

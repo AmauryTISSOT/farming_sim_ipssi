@@ -36,7 +36,7 @@ export class Factory implements IObserver {
     public update(subject: ISubject): void {
         if (
             subject instanceof Subject &&
-            subject.state >= STORAGE_CONST.MAX_CAPACITY
+            subject.state >= STORAGE_CONST.MAX_STORAGE_CAPACITY
         ) {
             console.log(
                 `Factory ${this.id} - ${this.type} → Max capacity reached (${subject.state})  STOPPED`

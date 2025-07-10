@@ -10,4 +10,7 @@ export enum OutputResourceType {
     GATEAU = "gâteau",
     CHIPS = "chips",
     VIN = "vin",
+    FERTILISANT = "fertilizant",
+    LAIT_STERILISE = "lait stérélisé",
+    BEURRE = "beurre",
 }

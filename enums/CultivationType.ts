@@ -4,7 +4,6 @@ export enum CultivationType {
     AVOINE = "avoine",
     CANOLA = "canola",
     SOJA = "soja",
-
     RAISIN = "raisin",
     OLIVE = "olive",
     POMME_DE_TERRE = "pommeDeTerre",
@@ -20,4 +19,7 @@ export enum CultivationType {
     EPINARD = "epinard",
     POIS = "pois",
     HARICOTS_VERTS = "haricotsVerts",
+    HERBES = "herbes",
+    CACAO = "cacao",
+    SERRE = "serre",
 }

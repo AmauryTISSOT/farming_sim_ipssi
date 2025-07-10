@@ -10,4 +10,7 @@ export enum FactoryType {
     BOULANGERIE = "Boulangerie",
     USINE_DE_CHIPS = "Usine de chips",
     CAVE_A_VIN = "Cave à vin",
+    USINE_FUMIER = "Usine de fumier",
+    LAITERIE = "Laiterie",
+    CHOCOLATERIE = "Chocolaterie",
 }

@@ -5,13 +5,16 @@ import { OutputResourceType } from "../enums/OutputResourceType";
 import { AtelierCoutureProductionStrategy } from "../strategy/AtelierCoutureProductionStrategy";
 import { BoulangerieProductionStrategy } from "../strategy/BoulangerieProductionStrategy";
 import { CaveAVinProductionStrategy } from "../strategy/CaveAVinProductionStrategy";
+import { ChocolaterieProductionStrategy } from "../strategy/ChocolaterieProductionStrategy";
 import { FabriqueWagonsProductionStrategy } from "../strategy/FabriqueWagonsProductionStrategy";
 import { FilatureProductionStrategy } from "../strategy/FilatureProductionStrategy";
+import { LaiterieProductionStategy } from "../strategy/LaiterieProductionStategy";
 import { MoulinAGrainsProductionStrategy } from "../strategy/MoulinAGrainsProductionStrategy";
 import { MoulinAHuileProductionStrategy } from "../strategy/MoulinAHuileProductionStrategy";
 import { RaffinerieSucreProductionStrategy } from "../strategy/RaffinerieSucreProductionStrategy";
 import { ScierieProductionStrategy } from "../strategy/ScierieProductionStrategy";
 import { UsineAChipsProductionStrategy } from "../strategy/UsineAChipsProductionStrategy";
+import { UsineAFumierProductionStrategy } from "../strategy/UsineAFumierProductionStrategy";
 import { UsineDeJouetsProductionStrategy } from "../strategy/UsineDeJouetsProductionStrategy";
 
 let nextId = 1;
@@ -107,9 +110,9 @@ export class FactoryFactory {
                 return new Factory(
                     id,
                     type,
-                    [InputResourceType.TISSU],
+                    [InputResourceType.TISSU, InputResourceType.LAINE],
                     OutputResourceType.VETEMENTS,
-                    2,
+                    4,
                     new AtelierCoutureProductionStrategy()
                 );
 
@@ -117,9 +120,16 @@ export class FactoryFactory {
                 return new Factory(
                     id,
                     type,
-                    [InputResourceType.SUCRE, InputResourceType.FARINE],
+                    [
+                        InputResourceType.SUCRE,
+                        InputResourceType.FARINE,
+                        InputResourceType.LAIT,
+                        InputResourceType.OEUFS,
+                        InputResourceType.FRAISES,
+                        InputResourceType.CHOCOLAT,
+                    ],
                     OutputResourceType.GATEAU,
-                    6,
+                    18,
                     new BoulangerieProductionStrategy()
                 );
 
@@ -141,6 +151,40 @@ export class FactoryFactory {
                     OutputResourceType.VIN,
                     2,
                     new CaveAVinProductionStrategy()
+                );
+
+            case FactoryType.USINE_FUMIER:
+                return new Factory(
+                    id,
+                    type,
+                    [InputResourceType.FUMER],
+                    OutputResourceType.FERTILISANT,
+                    2,
+                    new UsineAFumierProductionStrategy()
+                );
+
+            case FactoryType.LAITERIE:
+                return new Factory(
+                    id,
+                    type,
+                    [InputResourceType.LAIT],
+                    OutputResourceType.BEURRE,
+                    1,
+                    new LaiterieProductionStategy()
+                );
+
+            case FactoryType.CHOCOLATERIE:
+                return new Factory(
+                    id,
+                    type,
+                    [
+                        InputResourceType.CACAO,
+                        InputResourceType.SUCRE,
+                        InputResourceType.LAIT,
+                    ],
+                    OutputResourceType.BEURRE,
+                    2,
+                    new ChocolaterieProductionStrategy()
                 );
 
             default:

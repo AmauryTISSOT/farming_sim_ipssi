@@ -8,7 +8,7 @@ export class FarmStorage {
     public readonly stock: Map<string, number> = new Map();
     public subject: Subject = new Subject();
 
-    private constructor() {}
+    public constructor() {}
 
     public static get instance(): FarmStorage {
         if (!FarmStorage.#instance) {

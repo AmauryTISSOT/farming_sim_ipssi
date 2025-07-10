@@ -169,6 +169,25 @@ export class FieldFactory {
                     MachineType.TRAILER,
                 ],
             },
+            [CultivationType.HERBES]: {
+                yield: 5000,
+                requiredMaterial: [
+                    MachineType.TRACTOR,
+                    MachineType.PLANTER,
+                    MachineType.HARVESTER,
+                ],
+            },
+            [CultivationType.CACAO]: {
+                yield: 1000,
+                requiredMaterial: [
+                    MachineType.PLANTER_ARBRE,
+                    MachineType.HARVESTER_ARBRE,
+                ],
+            },
+            [CultivationType.SERRE]: {
+                yield: 1500,
+                requiredMaterial: [],
+            },
         };
 
         const cultivation = fieldConfig[type];
