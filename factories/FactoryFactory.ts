@@ -16,12 +16,11 @@ import { ScierieProductionStrategy } from "../strategy/ScierieProductionStrategy
 import { UsineAChipsProductionStrategy } from "../strategy/UsineAChipsProductionStrategy";
 import { UsineAFumierProductionStrategy } from "../strategy/UsineAFumierProductionStrategy";
 import { UsineDeJouetsProductionStrategy } from "../strategy/UsineDeJouetsProductionStrategy";
-
-let nextId = 1;
-
 export class FactoryFactory {
+    public static nextId = 1;
+
     public static createFactory(type: FactoryType): Factory {
-        const id = nextId++;
+        const id = this.nextId++;
 
         switch (type) {
             case FactoryType.MOULIN_A_HUILE:
@@ -157,7 +156,7 @@ export class FactoryFactory {
                 return new Factory(
                     id,
                     type,
-                    [InputResourceType.FUMER],
+                    [InputResourceType.FUMIER],
                     OutputResourceType.FERTILISANT,
                     2,
                     new UsineAFumierProductionStrategy()

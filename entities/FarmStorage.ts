@@ -1,3 +1,4 @@
+import { StockItemRepository } from "../data/repositories/StockItemRepository";
 import { IObserver } from "../observers/IObserver";
 import { Subject } from "../observers/Subject";
 import { Goods } from "./Goods";
@@ -8,7 +9,12 @@ export class FarmStorage {
     public readonly stock: Map<string, number> = new Map();
     public subject: Subject = new Subject();
 
-    public constructor() {}
+    private stockItemRepository: StockItemRepository;
+
+    public constructor() {
+        this.stockItemRepository = new StockItemRepository();
+        this.syncWithDatabase();
+    }
 
     public static get instance(): FarmStorage {
         if (!FarmStorage.#instance) {
@@ -18,38 +24,46 @@ export class FarmStorage {
         return FarmStorage.#instance;
     }
 
-    public addGoods(goods: Goods): void {
-        const existingQuantity = this.stock.get(goods.name.toString()) || 0;
+    public async addGoods(goods: Goods): Promise<void> {
+        const key = goods.name.toString();
+        const existingQuantity = this.stock.get(key) || 0;
         const newQuantity = existingQuantity + goods.quantity;
 
-        if (
-            this.stock.size >= this.maxCapacity &&
-            !this.stock.has(goods.name.toString())
-        ) {
+        if (this.stock.size >= this.maxCapacity && !this.stock.has(key)) {
             console.log("Storage is full. Cannot add new type of goods.");
             return;
         }
 
-        this.stock.set(goods.name.toString(), newQuantity);
+        this.stock.set(key, newQuantity);
+
+        await this.stockItemRepository.addToStock(key, goods.quantity);
+
         this.subject.state = this.getTotalQuantity();
         console.log(`Current quantity is : ${this.getTotalQuantity()}`);
         this.subject.notify();
     }
 
-    public removeGoods(goods: Goods): void {
-        const existingQuantity = this.stock.get(goods.name.toString());
+    public async removeGoods(goods: Goods): Promise<void> {
+        const key = goods.name.toString();
+        const existingQuantity = this.stock.get(key);
 
-        if (!existingQuantity) {
-            console.log(`Goods ${goods.name} not found in stock.`);
+        if (!existingQuantity || existingQuantity < goods.quantity) {
+            console.log(`Goods ${key} not found or insufficient in stock.`);
             return;
         }
 
         const remaining = existingQuantity - goods.quantity;
 
         if (remaining > 0) {
-            this.stock.set(goods.name.toString(), remaining);
+            this.stock.set(key, remaining);
         } else {
-            this.stock.delete(goods.name.toString());
+            this.stock.delete(key);
+        }
+
+        try {
+            await this.stockItemRepository.removeFromStock(key, goods.quantity);
+        } catch (error) {
+            console.error(`Error removing from DB stock: ${error}`);
         }
 
         console.log(`Removed ${goods.quantity} of ${goods.name} from stock.`);
@@ -85,5 +99,14 @@ export class FarmStorage {
             total += quantity;
         }
         return total;
+    }
+
+    private async syncWithDatabase(): Promise<void> {
+        const allStock = await this.stockItemRepository.findAll();
+        allStock.forEach((item) => {
+            this.stock.set(item.key, item.value);
+        });
+        this.subject.state = this.getTotalQuantity();
+        this.subject.notify();
     }
 }

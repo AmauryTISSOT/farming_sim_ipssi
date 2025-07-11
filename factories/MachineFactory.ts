@@ -1,10 +1,12 @@
 import { MachineType } from "../enums/MachineType";
 import { Machine } from "../entities/Machine";
+import { Prisma } from "@prisma/client";
+import prisma from "../data/Client";
 
 export class MachineFactory {
     private static idCounter = 1;
 
-    public static createMachines(): Machine[] {
+    public static async createMachines(): Promise<Machine[]> {
         const machines: Machine[] = [];
 
         machines.push(...this.generateMachineBatch(MachineType.TRACTOR, 5));
@@ -35,6 +37,16 @@ export class MachineFactory {
 
         for (const type of specializedTypes) {
             machines.push(new Machine(this.nextId(), type));
+        }
+
+        for (const machine of machines) {
+            await prisma.machine.create({
+                data: {
+                    id: machine.id, // ou enlève si géré auto
+                    type: machine.type,
+                    onTheField: machine.onTheField,
+                },
+            });
         }
 
         return machines;

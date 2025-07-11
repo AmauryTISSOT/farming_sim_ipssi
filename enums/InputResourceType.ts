@@ -17,7 +17,7 @@ export enum InputResourceType {
     POMME_DE_TERRE = "pomme de terre",
     HUILE = "huile",
     RAISIN = "raisin",
-    FUMER = "input",
+    FUMIER = "input",
     LAIT = "lait",
     CACAO = "cacao",
     OEUFS = "oeufs",

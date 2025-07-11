@@ -14,7 +14,7 @@ export class Factory implements IObserver {
     public requiredGoods: InputResourceType[];
     public result: OutputResourceType;
     public multiplier: number;
-    private stopped = false;
+    public stopped = false;
     private productionStrategy: IProductionStrategy;
 
     constructor(

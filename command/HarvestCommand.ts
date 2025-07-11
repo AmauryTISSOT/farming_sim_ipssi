@@ -3,10 +3,13 @@ import { Field } from "../entities/Field";
 import { Goods } from "../entities/Goods";
 import { FarmStorage } from "../entities/FarmStorage";
 import { ACTION_DURATIONS } from "../constants/TimeConstants";
+import { FieldRepository } from "../data/repositories/FieldRepository";
 
 export class HarvestCommand implements ICommand {
-    constructor(private field: Field) {}
-
+    private fieldRepository: FieldRepository;
+    constructor(private field: Field) {
+        this.fieldRepository = new FieldRepository();
+    }
     async execute(): Promise<void> {
         console.log(this.field.getState());
         if (this.field.getState() !== "Ready to harvest") {
@@ -20,6 +23,7 @@ export class HarvestCommand implements ICommand {
         const product = new Goods(this.field.type, this.field.yield);
         FarmStorage.instance.addGoods(product);
         this.field.nextCycle(); // → Harvested
+        this.fieldRepository.update(this.field.id, { state: "harvested" });
         console.log(`Field #${this.field.id} harvested.`);
         console.log(
             `Product ${product.name} - with quantity ${product.quantity} has been send to Storage`

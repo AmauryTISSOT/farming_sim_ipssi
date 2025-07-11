@@ -12,6 +12,10 @@ import { PlowCommand } from "../command/PlowCommand";
 import { SowCommand } from "../command/SowCommand";
 import { FertilizeCommand } from "../command/FertilizeCommand";
 import { HarvestCommand } from "../command/HarvestCommand";
+import { Prisma } from "@prisma/client";
+import { FieldRepository } from "../data/repositories/FieldRepository";
+import { FactoryRepository } from "../data/repositories/FactoryRepository";
+import { MachineRepository } from "../data/repositories/MachineRepository";
 
 export class FarmManager {
     public fields: Field[] = [];
@@ -21,13 +25,23 @@ export class FarmManager {
     private fieldIdCounter: number = 1;
     public farmStorage: FarmStorage = FarmStorage.instance;
 
-    constructor() {}
+    private fieldRepository: FieldRepository;
+    private factoryRepository: FactoryRepository;
+    private machineRepository: MachineRepository;
 
-    public createField(type: CultivationType): Field | null {
+    constructor() {
+        this.fieldRepository = new FieldRepository();
+        this.factoryRepository = new FactoryRepository();
+        this.machineRepository = new MachineRepository();
+    }
+
+    public async createField(type: CultivationType): Promise<Field | null> {
         if (this.fields.length < this.maxFields) {
             const field = FieldFactory.createField(this.fieldIdCounter++, type);
             FarmStorage.instance.attachObserver(field);
             this.fields.push(field);
+            const prismaField = this.mapToPrismaField(field);
+            await this.fieldRepository.create(prismaField);
             return field;
         } else {
             console.log("Max field capacity reached !");
@@ -35,20 +49,21 @@ export class FarmManager {
         }
     }
 
-    public createMachine(): void {
-        this.machinesHangar = MachineFactory.createMachines();
+    public async createMachine(): Promise<void> {
+        this.machinesHangar = await MachineFactory.createMachines();
     }
 
-    public createFactory(type: FactoryType): Factory {
+    public async createFactory(type: FactoryType): Promise<Factory> {
         const factory = FactoryFactory.createFactory(type);
         FarmStorage.instance.attachObserver(factory);
         this.factories.push(factory);
+        const prismaField = this.mapToPrismaFactory(factory);
+        await this.factoryRepository.create(prismaField);
         return factory;
     }
 
     public async sendMachineToField(): Promise<void> {
-        let i = 0;
-        this.fields.forEach((currentField) => {
+        for (const currentField of this.fields) {
             if (!currentField.isSowed) {
                 for (const machineTypeRequired of currentField.cultivationMaterial) {
                     for (const machine of this.machinesHangar) {
@@ -58,7 +73,13 @@ export class FarmManager {
                             !currentField.currentlyCultivated
                         ) {
                             machine.onTheField = true;
+                            await this.machineRepository.update(machine.id, {
+                                onTheField: true,
+                            });
                             currentField.currentlyCultivated = true;
+                            await this.fieldRepository.update(currentField.id, {
+                                currentlyCultivated: true,
+                            });
                             console.log(
                                 `Machine number ${machine.id} - ${machine.type} has been sent to field ${currentField.id} - ${currentField.type}`
                             );
@@ -66,7 +87,7 @@ export class FarmManager {
                     }
                 }
             }
-        });
+        }
     }
 
     public async startAllCultivation(): Promise<void> {
@@ -113,5 +134,29 @@ export class FarmManager {
             }
         } while (productionHappened);
         this.farmStorage.printStock();
+    }
+
+    private mapToPrismaField(field: Field): Prisma.FieldCreateInput {
+        return {
+            id: field.id,
+            type: field.type,
+            state: "harvested",
+            yield: field.yield,
+            machineType: field.cultivationMaterial,
+            stopped: false,
+            isSowed: field.isSowed,
+            currentlyCultivated: field.currentlyCultivated,
+        };
+    }
+
+    private mapToPrismaFactory(factory: Factory): Prisma.FactoryCreateInput {
+        return {
+            id: factory.id,
+            type: factory.type,
+            requiredGoods: factory.requiredGoods,
+            result: factory.result,
+            multiplier: factory.multiplier,
+            stopped: factory.stopped,
+        };
     }
 }
