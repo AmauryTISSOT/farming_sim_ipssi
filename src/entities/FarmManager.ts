@@ -112,7 +112,7 @@ export class FarmManager {
     this.farmStorage.printStock();
   }
 
-  private initializeWaterTank(): void {
+  public initializeWaterTank(): void {
     new WaterTank(15000);
   }
 
