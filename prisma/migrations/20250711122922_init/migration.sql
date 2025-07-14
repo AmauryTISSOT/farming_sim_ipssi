@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Factory" ALTER COLUMN "result" SET NOT NULL,
+ALTER COLUMN "result" SET DATA TYPE TEXT;

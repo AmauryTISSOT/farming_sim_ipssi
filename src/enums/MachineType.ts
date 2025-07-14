@@ -1,0 +1,26 @@
+export enum MachineType {
+    TRACTOR = "tracteur",
+    TRAILER = "remorque standard",
+    SEMI_TRAILER = "remorque semi",
+    HARVESTER = "moissonneuse-batteuse",
+    PLOW = "charrue",
+    FERTILIZER = "fertilisateur",
+    PLANTER = "semeuse",
+
+    HARVESTER_RAISIN = "moissonneuse à raisin",
+    HARVESTER_OLIVE = "moissonneuse à olive",
+    HARVESTER_PDT = "moissonneuse à pomme de terre",
+    HARVESTER_BETTERAVE = "moissonneuse à betterave",
+    HARVESTER_COTON = "moissonneuse à coton",
+    HARVESTER_CANNE = "moissonneuse à canne",
+    HARVESTER_ARBRE = "moissonneuse à arbre",
+    HARVESTER_EPINARD = "moissonneuse à épinard",
+    HARVESTER_HARICOT = "moissonneuse à haricots",
+    HARVESTER_POIS = "moissonneuse à pois",
+    HARVESTER_LEGUMES = "moissonneuse à légumes",
+
+    PLANTER_ARBRE = "planteuse à arbre",
+    PLANTER_PDT = "planteuse à pomme de terre",
+    PLANTER_CANNE = "planteuse à canne à sucre",
+    PLANTER_LEGUMES = "planteuse à légumes",
+}
